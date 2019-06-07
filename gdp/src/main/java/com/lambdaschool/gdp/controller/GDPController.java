@@ -113,6 +113,19 @@ public class GDPController
         GdpApplication.ourGdpList.gdpList.sort((e1,e2)->(int)(Long.parseLong(e2.getGdp()) - (Long.parseLong(e1.getGdp()))));
         return new ResponseEntity<>(GdpApplication.ourGdpList.gdpList, HttpStatus.OK);
     }
+
+//    localhost:2017/gdp/economy/table
+        @GetMapping(value = "/economy/table")
+        public ModelAndView displayGDPTable(HttpServletRequest request)
+        {
+            logger.trace(request.getRequestURI() + " accessed");
+
+            ModelAndView mav = new ModelAndView();
+            mav.setViewName("gdp");
+            mav.addObject("gdpList", GdpApplication.ourGdpList.gdpList);
+
+            return mav;
+        }
 }
 
 
