@@ -37,6 +37,16 @@ public class GDPController
         return new ResponseEntity<>(GdpApplication.ourGdpList.gdpList, HttpStatus.OK);
     }
 
+    //localhost:2017/gdp/economy
+    @GetMapping(value = "/economy", produces = {"application/json"})
+    public ResponseEntity<?>findEconomy(HttpServletRequest request)
+    {
+        logger.info(request.getRequestURI() + "/economy accessed");
+
+        GdpApplication.ourGdpList.gdpList.sort((e1,e2)->(int)(Long.parseLong(e2.getGdp()) - (Long.parseLong(e1.getGdp()))));
+        return new ResponseEntity<>(GdpApplication.ourGdpList.gdpList, HttpStatus.OK);
+    }
+
     // localhost:2017/gdp/country/{id}
     @GetMapping(value = "country/{id}",
                 produces = {"application/json"})
@@ -55,6 +65,30 @@ public class GDPController
             rtnGDP = GdpApplication.ourGdpList.findGDP(g -> (g.getId() == id));
         }
         return new ResponseEntity<>(rtnGDP, HttpStatus.OK);
+    }
+
+    // localhost:2017/gdp/country/stats/median
+    @GetMapping(value = "/country/stats/median", produces = {"application/json"})
+    public ResponseEntity<?>findMedianGDP(HttpServletRequest request)
+    {
+        logger.info(request.getRequestURI() + "/country/stats/median accessed");
+
+        GDP rtnGDP;
+        GdpApplication.ourGdpList.gdpList.sort((g1,g2) -> (int)(Long.parseLong(g1.getGdp())- (Long.parseLong(g2.getGdp()))));
+
+        rtnGDP = GdpApplication.ourGdpList.gdpList.get((GdpApplication.ourGdpList.gdpList.size()/2)+1);
+        return new ResponseEntity<>(rtnGDP, HttpStatus.OK);
+    }
+
+    //localhost:2017/gdp/economy/table
+    @GetMapping(value = "/economy/table")
+    public ModelAndView displayGDPTable(HttpServletRequest request)
+    {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("gdp");
+        mav.addObject("gdpList", GdpApplication.ourGdpList.gdpList);
+
+        return mav;
     }
 
     // localhost:2017/gdp/names/list/{country}
@@ -91,41 +125,6 @@ public class GDPController
         return new ResponseEntity<>(rtnGDP, HttpStatus.OK);
     }
 
-    // localhost:2017/gdp/country/stats/median
-    @GetMapping(value = "/country/stats/median", produces = {"application/json"})
-    public ResponseEntity<?>findMedianGDP(HttpServletRequest request)
-    {
-        logger.info(request.getRequestURI() + "/country/stats/median accessed");
-
-        GDP rtnGDP;
-        GdpApplication.ourGdpList.gdpList.sort((g1,g2) -> (int)(Long.parseLong(g1.getGdp())- (Long.parseLong(g2.getGdp()))));
-
-        rtnGDP = GdpApplication.ourGdpList.gdpList.get((GdpApplication.ourGdpList.gdpList.size()/2)+1);
-        return new ResponseEntity<>(rtnGDP, HttpStatus.OK);
-    }
-
-    //localhost:2017/gdp/economy
-    @GetMapping(value = "/economy", produces = {"application/json"})
-    public ResponseEntity<?>findEconomy(HttpServletRequest request)
-    {
-        logger.info(request.getRequestURI() + "/economy accessed");
-
-        GdpApplication.ourGdpList.gdpList.sort((e1,e2)->(int)(Long.parseLong(e2.getGdp()) - (Long.parseLong(e1.getGdp()))));
-        return new ResponseEntity<>(GdpApplication.ourGdpList.gdpList, HttpStatus.OK);
-    }
-
-//    localhost:2017/gdp/economy/table
-        @GetMapping(value = "/economy/table")
-        public ModelAndView displayGDPTable(HttpServletRequest request)
-        {
-            logger.trace(request.getRequestURI() + " accessed");
-
-            ModelAndView mav = new ModelAndView();
-            mav.setViewName("gdp");
-            mav.addObject("gdpList", GdpApplication.ourGdpList.gdpList);
-
-            return mav;
-        }
 }
 
 
