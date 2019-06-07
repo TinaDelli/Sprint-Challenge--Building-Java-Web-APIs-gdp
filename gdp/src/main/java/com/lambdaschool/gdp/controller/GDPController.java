@@ -91,6 +91,25 @@ public class GDPController
         return mav;
     }
 
+    //localhost:2017/gdp/names/a
+    @GetMapping(value="/names/{letter}")
+    public ModelAndView getTablesByLetter(HttpServletRequest request,
+                                                  @PathVariable
+                                                          char letter)
+    {
+    ArrayList<GDP> rtnGDP = GdpApplication.ourGdpList.
+            findGDPs(g -> g.getCountry().toUpperCase().charAt(0) == Character.toUpperCase(letter));
+
+        if (rtnGDP.size() == 0)
+    {
+        throw new ResourceNotFoundException("No countries start with " + letter);
+    }
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("gdp");
+        mav.addObject("gdpList", rtnGDP);
+        return mav;
+    }
+
     // localhost:2017/gdp/names/list/{country}
     @GetMapping(value = "/names/list/{country}")
     public ResponseEntity<?> getCountries(HttpServletRequest request,
@@ -108,22 +127,22 @@ public class GDPController
     }
 
     // localhost:2017/gdp/names/s
-    @GetMapping(value = "/names/{letter}",
-                produces = {"application/json"})
-    public ResponseEntity<?> getCountriesByLetter(HttpServletRequest request,
-            @PathVariable
-                    char letter)
-    {
-        logger.info(request.getRequestURI() + "/gdp/names/ " + letter + " accessed");
-        ArrayList<GDP> rtnGDP = GdpApplication.ourGdpList.
-                findGDPs(g -> g.getCountry().toUpperCase().charAt(0) == Character.toUpperCase(letter));
-
-        if (rtnGDP.size() == 0)
-        {
-            throw new ResourceNotFoundException("No countries start with " + letter);
-        }
-        return new ResponseEntity<>(rtnGDP, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/names/{letter}",
+//                produces = {"application/json"})
+//    public ResponseEntity<?> getCountriesByLetter(HttpServletRequest request,
+//            @PathVariable
+//                    char letter)
+//    {
+//        logger.info(request.getRequestURI() + "/gdp/names/ " + letter + " accessed");
+//        ArrayList<GDP> rtnGDP = GdpApplication.ourGdpList.
+//                findGDPs(g -> g.getCountry().toUpperCase().charAt(0) == Character.toUpperCase(letter));
+//
+//        if (rtnGDP.size() == 0)
+//        {
+//            throw new ResourceNotFoundException("No countries start with " + letter);
+//        }
+//        return new ResponseEntity<>(rtnGDP, HttpStatus.OK);
+//    }
 
 }
 
